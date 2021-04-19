@@ -1,8 +1,0 @@
-"0","decath_data %>% 
-  group_by(competitor, competition_points) %>% 
-  summarise() %>% 
-  summarise(across(where(is.numeric), sum)) %>% 
-  slice_max(competition_points)
-"
-"2","`summarise()` has grouped output by 'competitor'. You can override using the `.groups` argument.
-"
