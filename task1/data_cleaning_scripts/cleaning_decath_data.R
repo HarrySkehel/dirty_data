@@ -18,5 +18,9 @@ decath_data <- decath_data %>%
   rename(competiton_rank = rank, competition_points = points) %>% 
   relocate(event, result, .before = competiton_rank)
 
+decath_data <- decath_data %>% 
+  mutate(competitor = str_to_lower(competitor))
+  
+
 write_csv(decath_data, "clean_data/decath_data.csv")
   
