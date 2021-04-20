@@ -18,9 +18,21 @@ long_2015 <- cleanish_2015 %>%
                values_to = "rating")
   
   
+colnames(candy_2016)[1] = "[timestamp]"
+colnames(candy_2016)[2] = "[going_out]"
+colnames(candy_2016)[3] = "[gender]"
+colnames(candy_2016)[4] = "[age]"
+colnames(candy_2016)[5] = "[country]"
+colnames(candy_2016)[6] = "[state/province]"
 
+cleanish_2016 <- candy_2016[, grep("^(\\[)", names(candy_2016))]
 
+even_cleaner_2016 <- cleanish_2016[, 1:(length(cleanish_2016) -1) ]
 
+long_2016 <- even_cleaner_2016 %>% 
+  pivot_longer(cols = (7:106), 
+               names_to = "candy_type",
+               values_to = "rating")
 
 
   
