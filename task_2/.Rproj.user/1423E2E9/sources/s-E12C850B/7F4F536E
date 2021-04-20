@@ -3,7 +3,7 @@
     "path": "~/Documents/dirty_data/task_2/data_cleaning_script/cleaning_candy.R",
     "project_path": "data_cleaning_script/cleaning_candy.R",
     "type": "r_source",
-    "hash": "2237102227",
+    "hash": "1041396719",
     "contents": "",
     "dirty": false,
     "created": 1618862852632.0,
@@ -13,15 +13,15 @@
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "118,0",
-        "scrollLine": "101"
+        "cursorPosition": "119,0",
+        "scrollLine": "105"
     },
     "folds": "",
-    "lastKnownWriteTime": 1618937568,
+    "lastKnownWriteTime": 1618938168,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1618937568272,
+    "last_content_update": 1618938168985,
     "read_only": false,
     "read_only_alternatives": []
 }

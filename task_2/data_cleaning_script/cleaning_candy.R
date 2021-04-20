@@ -80,9 +80,9 @@ colnames(long_2016)[1] = "ID"
 colnames(long_2016)[2] = "time_stamp"
 colnames(long_2016)[3] = "going_out"
 colnames(long_2016)[4] = "gender"
-colnames(long_2016)[5] = "age"
+colnames(long_2016)[5] = "country"
 colnames(long_2016)[6] = "state_province"
-colnames(long_2016)[7] = "candy_type"
+colnames(long_2016)[7] = ""
 
 long_2016$time_stamp <- NULL
 
@@ -114,6 +114,10 @@ colnames(long_2017)[6] = "state_province"
 
 
 candy_2015_to_2016 <- bind_rows(long_2015, long_2016)
+
+all_candy <- bind_rows(candy_2015_to_2016, long_2017)
+
+sixteen_17 <- bind_rows(long_2016, long_2017)
 
 
 
