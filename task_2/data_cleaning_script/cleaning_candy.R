@@ -6,33 +6,115 @@ candy_2015 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2015.xlsx
 candy_2016 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2016.xlsx")
 candy_2017 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2017.xlsx")
 
-colnames(candy_2015)[1] = "[timestamp]"
-colnames(candy_2015)[2] = "[age]"
-colnames(candy_2015)[3] = "[going_out]"
+# Cleaning and lengthening 2015
+
+candy_2015 <- rowid_to_column(candy_2015, "[ID]")
+
+colnames(candy_2015)[2] = "[timestamp]"
+colnames(candy_2015)[3] = "[age]"
+colnames(candy_2015)[4] = "[going_out]"
+
 
 cleanish_2015 <- candy_2015[, grep("^(\\[)", names(candy_2015))]
 
 long_2015 <- cleanish_2015 %>% 
-  pivot_longer(cols = (4:98), 
+  pivot_longer(cols = (5:99), 
                names_to = "candy_type",
                values_to = "rating")
+
+
+long_2015 <- long_2015 %>% 
+  mutate(candy_type = str_remove_all(candy_type, "[\\[|\\]]"))
+
+colnames(long_2015)[1] = "ID"
+colnames(long_2015)[2] = "timestamp"
+colnames(long_2015)[3] = "age"
+colnames(long_2015)[4] = "going_out"
+
+long_2015$timestamp <- NULL
+
+long_2015 <- long_2015 %>% 
+  add_column(gender = NA, .after = "ID")
+
+long_2015 <- long_2015 %>% 
+  add_column(state_province = NA, .after = "going_out")
   
+long_2015 <- long_2015 %>% 
+  add_column(country = NA, .after = "state_province")
   
-colnames(candy_2016)[1] = "[timestamp]"
-colnames(candy_2016)[2] = "[going_out]"
-colnames(candy_2016)[3] = "[gender]"
-colnames(candy_2016)[4] = "[age]"
-colnames(candy_2016)[5] = "[country]"
-colnames(candy_2016)[6] = "[state/province]"
+
+long_2015 <- long_2015 %>% 
+  relocate(("going_out"), .after = 'ID')
+
+long_2015 <- long_2015 %>% 
+  relocate(("state_province"), .after = 'country')
+ 
+  
+ 
+# Cleaning and lengthening 2016
+
+candy_2016 <- rowid_to_column(candy_2016, "[ID]")
+
+colnames(candy_2016)[2] = "[timestamp]"
+colnames(candy_2016)[3] = "[going_out]"
+colnames(candy_2016)[4] = "[gender]"
+colnames(candy_2016)[5] = "[age]"
+colnames(candy_2016)[6] = "[country]"
+colnames(candy_2016)[7] = "[state/province]"
 
 cleanish_2016 <- candy_2016[, grep("^(\\[)", names(candy_2016))]
 
 even_cleaner_2016 <- cleanish_2016[, 1:(length(cleanish_2016) -1) ]
 
+
 long_2016 <- even_cleaner_2016 %>% 
-  pivot_longer(cols = (7:106), 
+  pivot_longer(cols = (8:107), 
                names_to = "candy_type",
                values_to = "rating")
 
 
-  
+long_2016 <- long_2016 %>% 
+  mutate(candy_type = str_remove_all(candy_type, "[\\[|\\]]"))
+
+colnames(long_2016)[1] = "ID"
+colnames(long_2016)[2] = "time_stamp"
+colnames(long_2016)[3] = "going_out"
+colnames(long_2016)[4] = "gender"
+colnames(long_2016)[5] = "age"
+colnames(long_2016)[6] = "state_province"
+colnames(long_2016)[7] = "candy_type"
+
+long_2016$time_stamp <- NULL
+
+# Cleaning and lengthening 2017
+
+candy_2017 <- rowid_to_column(candy_2017, "ID")
+
+cleaner_2017 <- candy_2017 %>% 
+  select(matches('Q1:|Q2:|Q3:|Q4:|Q5:|Q6'))
+
+names(cleaner_2017) <- substring(names(cleaner_2017), 5)
+
+cleaner_2017 <- rowid_to_column(cleaner_2017, "ID")
+
+
+long_2017 <- cleaner_2017 %>% 
+  pivot_longer(cols = (7:109), 
+               names_to = "candy_type",
+               values_to = "rating")
+
+
+
+colnames(long_2017)[2] = "going_out"
+colnames(long_2017)[3] = "gender"
+colnames(long_2017)[4] = "age"
+colnames(long_2017)[5] = "country"
+colnames(long_2017)[6] = "state_province"
+
+
+
+candy_2015_to_2016 <- bind_rows(long_2015, long_2016)
+
+
+
+
