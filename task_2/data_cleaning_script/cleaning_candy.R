@@ -11,6 +11,11 @@ colnames(candy_2015)[2] = "[age]"
 colnames(candy_2015)[3] = "[going_out]"
 
 cleanish_2015 <- candy_2015[, grep("^(\\[)", names(candy_2015))]
+
+long_2015 <- cleanish_2015 %>% 
+  pivot_longer(cols = (4:98), 
+               names_to = "candy_type",
+               values_to = "rating")
   
   
 
