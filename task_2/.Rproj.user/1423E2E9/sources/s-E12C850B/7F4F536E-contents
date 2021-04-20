@@ -120,5 +120,9 @@ all_candy <- bind_rows(candy_2015_to_2016, long_2017)
 sixteen_17 <- bind_rows(long_2016, long_2017)
 
 
+testbind <- combine(long_2015, long_2016)
+
+
+
 
 
