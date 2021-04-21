@@ -6,42 +6,56 @@ candy_2015 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2015.xlsx
 candy_2016 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2016.xlsx")
 candy_2017 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2017.xlsx")
 
-# Cleaning and lengthening 2015
+# 2015 --------------------------------------------------------------------------------------------------------
 
+# renaming columns I want to keep 
 
 colnames(candy_2015)[1] = "[timestamp]"
 colnames(candy_2015)[2] = "[age]"
 colnames(candy_2015)[3] = "[going_out]"
 
+#  pulling out all the columns that have []
 
 cleanish_2015 <- candy_2015[, grep("^(\\[)", names(candy_2015))]
 
+# adding a ID column
+
 cleanish_2015[, "long_id"] <- c(1:5630)
+
+# pivoting longer
 
 long_2015 <- cleanish_2015 %>% 
   pivot_longer(cols = (4:98), 
                names_to = "candy_type",
                values_to = "rating")
 
+# removing [] from the data in candy_type column
 
 long_2015 <- long_2015 %>% 
   mutate(candy_type = str_remove_all(candy_type, "[\\[|\\]]"))
 
+# removing timstamo column
+
 long_2015$"[timestamp]" <- NULL
+long_2015$state_province <- NULL
+
+# renaming columns to remove []
 
 colnames(long_2015)[1] = "age"
 colnames(long_2015)[2] = "going_out"
 
+# adding columns that appear in other tables
 
 long_2015 <- long_2015 %>% 
   add_column(country = NA, .after = "long_id") %>% 
   add_column(state_province = NA, .after = "country") %>% 
   add_column(gender = NA, .after = "age")
 
+# adding column to identify which dataset it has come from 
 
 long_2015[, "source"] <- "2015"
 
-
+# 2016 -------------------------------------------------------------------------------------------------------
 # Cleaning and lengthening 2016
 
 
@@ -53,6 +67,8 @@ colnames(candy_2016)[5] = "[country]"
 colnames(candy_2016)[6] = "[state/province]"
 
 cleanish_2016 <- candy_2016[, grep("^(\\[)", names(candy_2016))]
+
+# removing last column
 
 even_cleaner_2016 <- cleanish_2016[, 1:(length(cleanish_2016) -1) ]
 
@@ -79,7 +95,7 @@ colnames(long_2016)[4] = "country"
 long_2016[, "source"] <- "2016"
 
 
-# Cleaning and lengthening 2017
+# 2017 ----------------------------------------------------------------------------------------------------------
 
 cleaner_2017 <- candy_2017 %>% 
   select(matches('Q1:|Q2:|Q3:|Q4:|Q5:|Q6'))
@@ -105,7 +121,9 @@ colnames(long_2017)[4] = "country"
 long_2017[, "source"] <- "2017"
 
 
-# Binding rows
+# Binding rows --------------------------------------------------------------------------------------------
+
+# ordering columns into correct order 
 
 ready_to_merge_2015 <- long_2015 %>% 
   select(long_id, age, gender, going_out, country, candy_type, rating, source)
@@ -116,26 +134,33 @@ ready_to_merge_2016 <- long_2016 %>%
 ready_to_merge_2017 <- long_2017 %>% 
   select(long_id, age, gender, going_out, country, candy_type, rating, source)
 
+# combing rows
+
 candy_all_years <- bind_rows(ready_to_merge_2015, ready_to_merge_2016, ready_to_merge_2017)
 
-candy_all_years <- candy_all_years %>% 
-  mutate(country = str_to_lower(country))
+# all countries and candy_type to lower case
 
+candy_all_years <- candy_all_years %>% 
+  mutate(country = str_to_lower(country)) %>% 
+  mutate(candy_type = str_to_lower(candy_type))
+
+# calculating number of NAs across rows to find cases where no question has been answered
 
 candy_all_years <- candy_all_years %>% 
   mutate(total_NAs = apply(., MARGIN = 1, function(x) sum(is.na(x))))
 
+# removing any rows where no questions have been answered
+
 candy_all_years <- candy_all_years %>% 
   filter(total_NAs != 5)
 
-candy_all_years %>% 
-  count(country)
+# creating patterns for all the different ways people have specifiefd America, Canada or UK
 
-candy_all_countries <- candy_all_years
+pattern_us <- "'merica|merica|america|usa|us|u.s.|us|state|u s|u.s.a|trump|united|murica|murrika
+                |amerca|new york|california|new jersey|alaska|yoo ess"
+pattern_uk <- "endland|england|scotland|dom|u.k.|ireland"
 
-all_countries <- candy_all_countries %>% 
-  count(country)
-
+pattern_canada <- "canada|canada`"
 
 
 candy_all_countries <- candy_all_years %>% 
@@ -148,9 +173,9 @@ candy_all_countries <- candy_all_years %>%
     )
   )
 
+clean_candy <- candy_all_countries
 
-pattern_us <- "'merica|merica|america|usa|us|u.s.|us|state|u s|u.s.a|trump|united|murica|murrika
-                |amerca|new york|california|new jersey|alaska|yoo ess"
-pattern_uk <- "endland|england|scotland|dom|u.k.|ireland"
+write_csv(clean_candy, "clean_data/clean_candy.csv")
 
-pattern_canada <- "canada|canada`"
+
+
