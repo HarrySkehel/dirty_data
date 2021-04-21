@@ -1,0 +1,27 @@
+"0","candy <- read_csv(here(""clean_data/clean_candy.csv""))
+"
+"2","
+[36m──[39m [1m[1mColumn specification[1m[22m [36m──────────────────────────────────────────────────────────────────────────────────────────────────────────────[39m
+cols(
+  long_id = [32mcol_double()[39m,
+  age = [32mcol_double()[39m,
+  gender = [33mcol_logical()[39m,
+  going_out = [31mcol_character()[39m,
+  country = [31mcol_character()[39m,
+  candy_type = [31mcol_character()[39m,
+  rating = [31mcol_character()[39m,
+  source = [32mcol_double()[39m,
+  total_NAs = [32mcol_double()[39m
+)
+
+"
+"2","388109 parsing failures.
+ row col               expected actual                                                                        file
+5131 age no trailing characters   30's '/Users/harryskehel/Documents/dirty_data/task_2/clean_data/clean_candy.csv'
+5132 age no trailing characters   30's '/Users/harryskehel/Documents/dirty_data/task_2/clean_data/clean_candy.csv'
+5133 age no trailing characters   30's '/Users/harryskehel/Documents/dirty_data/task_2/clean_data/clean_candy.csv'
+5134 age no trailing characters   30's '/Users/harryskehel/Documents/dirty_data/task_2/clean_data/clean_candy.csv'
+5135 age no trailing characters   30's '/Users/harryskehel/Documents/dirty_data/task_2/clean_data/clean_candy.csv'
+.... ... ...................... ...... ...........................................................................
+See problems(...) for more details.
+"

@@ -1,0 +1,87 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(here)
+
+candy <- read_csv(here("clean_data/clean_candy.csv"))
+```
+```{r}
+# Quesiton 1
+
+candy %>% 
+  summarise(number_of_ratings = sum(!is.na(rating)))
+  
+```
+```{r}
+#Question 2
+
+candy %>% 
+  select(going_out, age) %>% 
+  group_by(going_out) %>% 
+  summarise(average_age = median(age, na.rm = TRUE))  
+
+
+```
+
+```{r} 
+# Question 3
+
+candy %>% 
+  filter(rating == "JOY") %>% 
+  group_by(candy_type, rating) %>% 
+  summarise(number_ratings = n()) %>% 
+  ungroup() %>% 
+  slice_max(number_ratings, n = 1)
+
+candy %>% 
+  filter(rating == "DESPAIR") %>% 
+  group_by(candy_type, rating) %>% 
+  summarise(number_ratings = n()) %>% 
+  ungroup() %>% 
+  slice_max(number_ratings, n = 1)
+
+candy %>% 
+  filter(rating == "MEH") %>% 
+  group_by(candy_type, rating) %>% 
+  summarise(number_ratings = n()) %>% 
+  ungroup() %>% 
+  slice_max(number_ratings, n = 1)
+
+  
+```
+```{r}
+# Quesiton 4
+
+candy %>% 
+  filter(rating == "DESPAIR") %>% 
+  filter(candy_type == "starburst") %>% 
+  summarise(number_of_ratings = n())
+```
+
+```{r}
+# number ratings 
+
+candy_by_numbers <- candy %>%
+  mutate(
+    rating = case_when(
+      rating == "JOY"     ~ 1,
+      rating == "MEH"     ~ 0,
+      rating == "DESPAIR" ~ -1,
+      TRUE                ~ as.numeric(rating)
+    ))
+  
+  
+
+```
+
+
+```{r}
+
+
+
+```
+

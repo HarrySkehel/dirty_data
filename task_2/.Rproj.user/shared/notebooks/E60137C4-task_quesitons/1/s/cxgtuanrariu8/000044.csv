@@ -1,0 +1,9 @@
+"0","candy %>% 
+  filter(rating == ""MEH"") %>% 
+  group_by(candy_type, rating) %>% 
+  summarise(number_ratings = n()) %>% 
+  ungroup() %>% 
+  slice_max(number_ratings, n = 1)
+"
+"2","`summarise()` has grouped output by 'candy_type'. You can override using the `.groups` argument.
+"
