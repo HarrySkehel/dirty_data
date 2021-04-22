@@ -1,8 +1,0 @@
-"0","# Question 6"
-"0",""
-"0","candy_by_numbers %>%"
-"0","  filter(gender == ""Male"") %>% "
-"0","  group_by(candy_type) %>% "
-"0","  summarise(total_ratings = sum(rating, na.rm = TRUE)) %>% "
-"0","  ungroup() %>% "
-"0","  slice_max(total_ratings)"

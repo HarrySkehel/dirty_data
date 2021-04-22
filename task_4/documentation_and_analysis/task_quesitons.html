@@ -171,6 +171,54 @@ pre code {
 
 
 <p>The dataset was made up of 3 separate tables, one for each year from 2015 to 2017. There were many differences in the tables including numbers of columns and formatting of column names.</p>
+<p>The cleaning on 2015 is being used as an example as much of the cleaning on the 2016 and 2017 were similar.</p>
+<p>As the formatting of the column headings was varied, the desiered columns were renamed in a similar format so required columns could be pulled out by pattern.</p>
+<pre reval="FALSE"><code>colnames(candy_2015)[1] = &quot;[timestamp]&quot;
+colnames(candy_2015)[2] = &quot;[age]&quot;
+colnames(candy_2015)[3] = &quot;[going_out]&quot;
+
+cleanish_2015 &lt;- candy_2015[, grep(&quot;^(\\[)&quot;, names(candy_2015))]</code></pre>
+<p>An ID column was also added to all the tables which would continue across each table instead of going back to 1 when the next table begins.</p>
+<pre reval="FALSE"><code>cleanish_2015[, &quot;long_id&quot;] &lt;- c(1:5630)
+
+even_cleaner_2016[, &quot;long_id&quot;] &lt;- c(5631:6889)
+
+cleaner_2017[, &quot;long_id&quot;] &lt;- c(6890:9349)</code></pre>
+<p>Tables pivoted longer to have “candy_type” as a column heading with each different candy type as observations.The ratings are now also contained in one column.</p>
+<pre reval="FALSE"><code>long_2015 &lt;- cleanish_2015 %&gt;% 
+  pivot_longer(cols = (4:98), 
+               names_to = &quot;candy_type&quot;,
+               values_to = &quot;rating&quot;)</code></pre>
+<p>A added “source” column to allow data to be identified by original data once tables are merged.</p>
+<pre reval="FALSE"><code>long_2015[, &quot;source&quot;] &lt;- &quot;2015&quot;</code></pre>
+<p>Tables all in the same order are merged together.</p>
+<pre reval="FALSE"><code>candy_all_years &lt;- bind_rows(ready_to_merge_2015, ready_to_merge_2016, ready_to_merge_2017)</code></pre>
+<p>By calculating the number of NAs across the columns, the dataset could be slightly shrunk as any rows with 5 NAs could be removed as it meant none of the questions had been answered.</p>
+<pre reval="FALSE"><code>
+candy_all_years &lt;- candy_all_years %&gt;% 
+  mutate(total_NAs = apply(., MARGIN = 1, function(x) sum(is.na(x))))
+
+candy_all_years &lt;- candy_all_years %&gt;% 
+  filter(total_NAs != 5)
+</code></pre>
+<p>As “country” column was extremely varied in contents, variables were made to create patterns for detection in the column. The values in the columns were mutated accordingly.</p>
+<pre reval="FALSE"><code>pattern_us &lt;- &quot;&#39;merica|merica|america|usa|us|u.s.|us|state|u s|u.s.a|trump|united|murica|murrika
+                |amerca|new york|california|new jersey|alaska|yoo ess&quot;
+pattern_uk &lt;- &quot;endland|england|scotland|dom|u.k.|ireland&quot;
+
+pattern_canada &lt;- &quot;canada|canada`&quot;
+
+
+candy_all_countries &lt;- candy_all_years %&gt;% 
+  mutate(
+    country = case_when(
+      str_detect(country, pattern_uk) ~ &quot;uk&quot;,
+      str_detect(country, pattern_us) ~ &quot;usa&quot;,
+      str_detect(country, pattern_canada) ~ &quot;canada&quot;,
+      TRUE ~ &quot;Other&quot;
+    )
+  )</code></pre>
+<p>Questions to be answered.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
 <pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
@@ -196,7 +244,7 @@ pre code {
 ##   source = col_double(),
 ##   total_NAs = col_double()
 ## )</code></pre>
-<pre class="r"><code># Quesiton 1
+<pre class="r"><code># Question 1 - What is the total number of candy ratings given across the three years. (number of candy ratings, not number of raters. Don’t count missing values)
 
 
 candy %&gt;% 
@@ -206,7 +254,7 @@ candy %&gt;%
 {"columns":[{"label":["number_of_ratings"],"name":[1],"type":["int"],"align":["right"]}],"data":[{"1":"772352"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code>#Question 2
+<pre class="r"><code># Question 2 - What was the average age of people who are going out trick or treating and the average age of people 3. not going trick or treating?
 
 candy %&gt;% 
   select(going_out, age) %&gt;% 
@@ -217,7 +265,7 @@ candy %&gt;%
 {"columns":[{"label":["going_out"],"name":[1],"type":["chr"],"align":["left"]},{"label":["average_age"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"No","2":"38"},{"1":"Yes","2":"37"},{"1":"NA","2":"42"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code># Question 3
+<pre class="r"><code># Question 3 - For each of joy, despair and meh, which candy bar revived the most of these ratings?
 
 candy %&gt;% 
   group_by(rating, candy_type) %&gt;% 
@@ -229,7 +277,7 @@ candy %&gt;%
 {"columns":[{"label":["rating"],"name":[1],"type":["chr"],"align":["left"]},{"label":["candy_type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["number_ratings"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"DESPAIR","2":"broken glow stick","3":"7905"},{"1":"JOY","2":"any full-sized candy bar","3":"7589"},{"1":"MEH","2":"lollipops","3":"1570"},{"1":"NA","2":"maynards","3":"2475"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code># Quesiton 4
+<pre class="r"><code># Question 4 - How many people rated Starburst as despair?
 
 candy %&gt;% 
   filter(rating == &quot;DESPAIR&quot;) %&gt;% 
@@ -240,7 +288,7 @@ candy %&gt;%
 {"columns":[{"label":["number_of_ratings"],"name":[1],"type":["int"],"align":["right"]}],"data":[{"1":"1990"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code># number ratings 
+<pre class="r"><code># number ratings - for questions 5,6 &amp; 7
 
 candy_by_numbers &lt;- candy %&gt;%
   mutate(
@@ -251,20 +299,10 @@ candy_by_numbers &lt;- candy %&gt;%
       TRUE                ~ as.numeric(rating)
     ))</code></pre>
 <pre><code>## Warning in eval_tidy(pair$rhs, env = default_env): NAs introduced by coercion</code></pre>
-<pre class="r"><code># Question 6
+<pre class="r"><code># Question 6 -What was the most popular candy bar by this rating system for each gender in the dataset?
 
-candy_by_numbers %&gt;%
-  filter(gender == &quot;Male&quot;) %&gt;% 
-  group_by(candy_type) %&gt;% 
-  summarise(total_ratings = sum(rating, na.rm = TRUE)) %&gt;% 
-  ungroup() %&gt;% 
-  slice_max(total_ratings)</code></pre>
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":["candy_type"],"name":[1],"type":["chr"],"align":["left"]},{"label":["total_ratings"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"any full-sized candy bar","2":"1584"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-<pre class="r"><code>candy_by_numbers %&gt;% 
+
+candy_by_numbers %&gt;% 
   group_by(gender, candy_type) %&gt;% 
   summarise(total_ratings = sum(rating, na.rm = TRUE)) %&gt;% 
   slice_max(total_ratings)</code></pre>
@@ -274,7 +312,7 @@ candy_by_numbers %&gt;%
 {"columns":[{"label":["gender"],"name":[1],"type":["chr"],"align":["left"]},{"label":["candy_type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["total_ratings"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"Female","2":"any full-sized candy bar","3":"875"},{"1":"I'd rather not say","2":"any full-sized candy bar","3":"68"},{"1":"Male","2":"any full-sized candy bar","3":"1584"},{"1":"Other","2":"any full-sized candy bar","3":"37"},{"1":"NA","2":"any full-sized candy bar","3":"4618"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code># Quesiton 7
+<pre class="r"><code># Quesiton 7 - What was the most popular candy bar in each year?
 candy_by_numbers %&gt;% 
   group_by(source, candy_type) %&gt;% 
   summarise(total_ratings = sum(rating, na.rm = TRUE)) %&gt;% 
@@ -285,7 +323,7 @@ candy_by_numbers %&gt;%
 {"columns":[{"label":["source"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["candy_type"],"name":[2],"type":["chr"],"align":["left"]},{"label":["total_ratings"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"2015","2":"any full-sized candy bar","3":"4603"},{"1":"2016","2":"any full-sized candy bar","3":"1037"},{"1":"2017","2":"any full-sized candy bar","3":"1542"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code># Question 8
+<pre class="r"><code># Question 8 - What was the most popular candy bar by this rating for people in US, Canada, UK and all other countries?
 candy_by_numbers %&gt;% 
   group_by(country, candy_type) %&gt;% 
   summarise(total_ratings = sum(rating, na.rm = TRUE)) %&gt;% 

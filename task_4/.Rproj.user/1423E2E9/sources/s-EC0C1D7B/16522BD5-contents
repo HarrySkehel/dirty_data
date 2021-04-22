@@ -7,6 +7,85 @@ output:
 
 The dataset was made up of 3 separate tables, one for each year from 2015 to 2017. There were many differences in the tables including numbers of columns and formatting of column names.
 
+The cleaning on 2015 is being used as an example as much of the cleaning on the 2016 and 2017 were similar.
+
+As the formatting of the column headings was varied, the desiered columns were renamed in a similar format so required columns could be pulled out by pattern.
+```{reval=FALSE}
+colnames(candy_2015)[1] = "[timestamp]"
+colnames(candy_2015)[2] = "[age]"
+colnames(candy_2015)[3] = "[going_out]"
+
+cleanish_2015 <- candy_2015[, grep("^(\\[)", names(candy_2015))]
+```
+
+An ID column was also added to all the tables which would continue across each table instead of going back to 1 when the next table begins.
+
+```{reval=FALSE}
+cleanish_2015[, "long_id"] <- c(1:5630)
+
+even_cleaner_2016[, "long_id"] <- c(5631:6889)
+
+cleaner_2017[, "long_id"] <- c(6890:9349)
+```
+
+Tables pivoted longer to have "candy_type" as a column heading with each different candy type as observations.The ratings are now also contained in one column.
+
+```{reval=FALSE}
+long_2015 <- cleanish_2015 %>% 
+  pivot_longer(cols = (4:98), 
+               names_to = "candy_type",
+               values_to = "rating")
+```
+
+
+A added "source" column to allow data to be identified by original data once tables are merged.
+
+```{reval=FALSE}
+long_2015[, "source"] <- "2015"
+```
+
+Tables all in the same order are merged together.
+```{reval=FALSE}
+candy_all_years <- bind_rows(ready_to_merge_2015, ready_to_merge_2016, ready_to_merge_2017)
+```
+
+By calculating the number of NAs across the columns, the dataset could be slightly shrunk as any rows with 5 NAs could be removed as it meant none of the questions had been answered.
+```{reval=FALSE}
+
+candy_all_years <- candy_all_years %>% 
+  mutate(total_NAs = apply(., MARGIN = 1, function(x) sum(is.na(x))))
+
+candy_all_years <- candy_all_years %>% 
+  filter(total_NAs != 5)
+
+```
+
+As "country" column was extremely varied in contents, variables were made to create patterns for detection in the column. The values in the columns were mutated accordingly.
+```{reval=FALSE}
+pattern_us <- "'merica|merica|america|usa|us|u.s.|us|state|u s|u.s.a|trump|united|murica|murrika
+                |amerca|new york|california|new jersey|alaska|yoo ess"
+pattern_uk <- "endland|england|scotland|dom|u.k.|ireland"
+
+pattern_canada <- "canada|canada`"
+
+
+candy_all_countries <- candy_all_years %>% 
+  mutate(
+    country = case_when(
+      str_detect(country, pattern_uk) ~ "uk",
+      str_detect(country, pattern_us) ~ "usa",
+      str_detect(country, pattern_canada) ~ "canada",
+      TRUE ~ "Other"
+    )
+  )
+```
+
+
+
+
+
+
+Questions to be answered.
 
 ```{r}
 library(tidyverse)
@@ -17,7 +96,7 @@ candy <- read_csv(here("clean_data/clean_candy.csv"), guess_max = 800000)
 
 
 ```{r}
-# Quesiton 1
+# Question 1 - What is the total number of candy ratings given across the three years. (number of candy ratings, not number of raters. Don’t count missing values)
 
 
 candy %>% 
@@ -25,7 +104,7 @@ candy %>%
   
 ```
 ```{r}
-#Question 2
+# Question 2 - What was the average age of people who are going out trick or treating and the average age of people 3. not going trick or treating?
 
 candy %>% 
   select(going_out, age) %>% 
@@ -36,7 +115,7 @@ candy %>%
 ```
 
 ```{r} 
-# Question 3
+# Question 3 - For each of joy, despair and meh, which candy bar revived the most of these ratings?
 
 candy %>% 
   group_by(rating, candy_type) %>% 
@@ -49,7 +128,7 @@ candy %>%
 
 
 ```{r}
-# Quesiton 4
+# Question 4 - How many people rated Starburst as despair?
 
 candy %>% 
   filter(rating == "DESPAIR") %>% 
@@ -58,7 +137,7 @@ candy %>%
 ```
 
 ```{r}
-# number ratings 
+# number ratings - for questions 5,6 & 7
 
 candy_by_numbers <- candy %>%
   mutate(
@@ -74,14 +153,7 @@ candy_by_numbers <- candy %>%
 
 
 ```{r}
-# Question 6
-
-candy_by_numbers %>%
-  filter(gender == "Male") %>% 
-  group_by(candy_type) %>% 
-  summarise(total_ratings = sum(rating, na.rm = TRUE)) %>% 
-  ungroup() %>% 
-  slice_max(total_ratings)
+# Question 6 -What was the most popular candy bar by this rating system for each gender in the dataset?
 
 
 candy_by_numbers %>% 
@@ -92,7 +164,7 @@ candy_by_numbers %>%
 
 ```
 ```{r}
-# Quesiton 7
+# Quesiton 7 - What was the most popular candy bar in each year?
 candy_by_numbers %>% 
   group_by(source, candy_type) %>% 
   summarise(total_ratings = sum(rating, na.rm = TRUE)) %>% 
@@ -100,7 +172,7 @@ candy_by_numbers %>%
 
 ```
 ```{r}
-# Question 8
+# Question 8 - What was the most popular candy bar by this rating for people in US, Canada, UK and all other countries?
 candy_by_numbers %>% 
   group_by(country, candy_type) %>% 
   summarise(total_ratings = sum(rating, na.rm = TRUE)) %>% 
