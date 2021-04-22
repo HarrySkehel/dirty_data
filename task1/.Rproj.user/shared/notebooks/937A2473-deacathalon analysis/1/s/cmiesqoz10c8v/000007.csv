@@ -1,0 +1,6 @@
+"0","# Question 4, top 3 shot put per comp"
+"0",""
+"0","decath_clean %>% "
+"0","  filter(event == ""shot_put"") %>% "
+"0","  group_by(competition) %>% "
+"0","  slice_max(result, n = 3)"

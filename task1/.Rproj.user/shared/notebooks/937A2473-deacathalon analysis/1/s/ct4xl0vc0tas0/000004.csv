@@ -1,2 +1,10 @@
-"0","  "
 "0",""
+"0","# Question 3 highest point across both competitions"
+"0",""
+"0","decath_clean %>% "
+"0","  group_by(competitor, competition_points) %>% "
+"0","  summarise() %>% "
+"0","  summarise(across(where(is.numeric), sum)) %>% "
+"0","  slice_max(competition_points)"
+"2","`summarise()` has grouped output by 'competitor'. You can override using the `.groups` argument.
+"

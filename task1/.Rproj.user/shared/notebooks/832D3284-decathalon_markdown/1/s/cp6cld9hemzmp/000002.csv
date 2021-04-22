@@ -1,0 +1,2 @@
+"0","decath_data_clean <- rownames_to_column(decath_data, ""Competitor"") %>% "
+"0","  clean_names()"

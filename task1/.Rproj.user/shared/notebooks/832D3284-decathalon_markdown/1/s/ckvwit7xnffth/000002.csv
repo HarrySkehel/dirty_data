@@ -1,4 +1,4 @@
-"0","decath_data %>% "
+"0","decath_clean %>% "
 "0","  select(result, event, competition) %>% "
 "0","  group_by(competition) %>% "
 "0","  filter(event == ""x100m"") %>% "

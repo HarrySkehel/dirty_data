@@ -1,5 +1,4 @@
-"0",""
-"0","decath_data %>% "
+"0","decath_clean %>% "
 "0","  group_by(competitor, competition_points) %>% "
 "0","  summarise() %>% "
 "0","  summarise(across(where(is.numeric), sum)) %>% "
