@@ -1,4 +1,4 @@
-"0","# Question 1, longest long jump"
+"0","# Question 1 - Who had the longest long jump seen in the data?"
 "0",""
 "0","decath_clean %>% "
 "0","  filter(event == ""long_jump"") %>% "

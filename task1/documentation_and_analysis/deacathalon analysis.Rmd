@@ -49,7 +49,7 @@ decath_clean <- read_csv(here("clean_data/decath_clean.csv"))
 ```
 
 ```{r}
-# Quesiton 1 - Who had the longest long jump seen in the data?
+# Question 1 - Who had the longest long jump seen in the data?
 
 decath_clean %>% 
   filter(event == "long_jump") %>% 

@@ -1,7 +1,0 @@
-"0","# Question 2, average 100m time per competition"
-"0",""
-"0","decath_clean %>% "
-"0","  select(result, event, competition) %>% "
-"0","  group_by(competition) %>% "
-"0","  filter(event == ""x100m"") %>% "
-"0","  summarise(across(where(is.numeric), mean))"

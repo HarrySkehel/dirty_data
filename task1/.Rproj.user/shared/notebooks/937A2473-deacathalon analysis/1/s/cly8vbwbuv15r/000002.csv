@@ -1,6 +1,0 @@
-"0","# Average points for 400m times"
-"0",""
-"0","decath_data %>% "
-"0","  filter(event == ""x400m"") %>% "
-"0","  group_by(result <= 50) %>% "
-"0","  summarise(avg_points = mean(competition_points))"
