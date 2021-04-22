@@ -1,9 +1,9 @@
 {
     "id": "8B093FE4",
-    "path": "~/Documents/dirty_data/task1/documentation_and_analysis/deacathalon analysis.Rmd",
-    "project_path": "documentation_and_analysis/deacathalon analysis.Rmd",
+    "path": "~/Documents/dirty_data/task1/documentation_and_analysis/deacathalon analysis.nb.Rmd",
+    "project_path": "documentation_and_analysis/deacathalon analysis.nb.Rmd",
     "type": "r_markdown",
-    "hash": "0",
+    "hash": "3911475447",
     "contents": "",
     "dirty": false,
     "created": 1618832611932.0,
@@ -14,15 +14,15 @@
         "chunk_output_type": "inline",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "11,69",
+        "cursorPosition": "26,66",
         "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1619093914,
+    "lastKnownWriteTime": 1619094223,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1619093914432,
+    "last_content_update": 1619094223982,
     "read_only": false,
     "read_only_alternatives": []
 }

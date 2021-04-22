@@ -1,0 +1,6 @@
+"0","# Question 5 - What was the average points for competitors who ran the 400m in less than 50 seconds vs. those than ran 400m in more than 50 seconds?"
+"0",""
+"0","decath_clean %>% "
+"0","  filter(event == ""x400m"") %>% "
+"0","  group_by(result <= 50) %>% "
+"0","  summarise(avg_points = mean(competition_points))"

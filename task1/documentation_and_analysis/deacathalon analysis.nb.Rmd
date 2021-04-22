@@ -1,0 +1,104 @@
+---
+title: "Decathalon_Analysis"
+output: html_notebook
+---
+
+The dataset in question contains athletes results from the differnet events in a decathelon as well as there competiton rank and score. 
+Each event is a different variable as well as the competitons "Olympic" and "Descastar" having their own columns. Each observation is the result for an individual athlete.
+
+
+Cleaning the data:
+
+The row names were removed and made into a column called "competitor"
+
+```{r eval=FALSE}
+decath_data_clean <- rownames_to_column(decath_data, "Competitor") %>% 
+  clean_names()
+```
+
+The dataset was then pivoted longer to contain one varialbe "event". The "points" and "rank" columns were also renamed to specify that they were relative to the cempetition.
+Columns were also move, move for asthetics than functionality.
+
+```{r eval=FALSE}
+decath_data_clean <- decath_data_clean %>% 
+  pivot_longer(cols = c(2:11), 
+               names_to = "event",
+               values_to = "result") %>% 
+  rename(competiton_rank = rank, competition_points = points) %>% 
+  relocate(event, result, .before = competiton_rank)
+```
+
+Finally the competitor names were all made lower case as there were instances where the cases were different between competitons. 
+The clean data was written to a .csv file
+
+```{r eval=FALSE}
+decath_clean <- decath_data_clean %>% 
+  mutate(competitor = str_to_lower(competitor))
+  
+
+write_csv(decath_clean, "clean_data/decath_clean.csv")
+
+```
+
+
+```{r}
+library(here)
+here()
+
+decath_clean <- read_csv(here("clean_data/decath_clean.csv"))
+```
+
+```{r}
+# Question 1 - Who had the longest long jump seen in the data?
+
+decath_clean %>% 
+  filter(event == "long_jump") %>% 
+  slice_max(result, n = 1)
+```
+
+```{r}
+# Question 2 - What was the average 100m time in each competition?
+
+decath_clean %>% 
+  select(result, event, competition) %>% 
+  group_by(competition) %>% 
+  filter(event == "x100m") %>% 
+  summarise(across(where(is.numeric), mean))
+
+```
+
+```{r}
+
+# Question 3 - Who had the highest total points across both competitions?
+
+decath_clean %>% 
+  group_by(competitor, competition_points) %>% 
+  summarise() %>% 
+  summarise(across(where(is.numeric), sum)) %>% 
+  slice_max(competition_points)
+  
+
+```
+
+```{r}
+# Question 4 - What was the shot-put scores for the top three competitors in each competition?
+
+decath_clean %>% 
+  filter(event == "shot_put") %>% 
+  group_by(competition) %>% 
+  slice_max(result, n = 3)
+  
+```
+
+```{r}
+# Question 5 - What was the average points for competitors who ran the 400m in less than 50 seconds vs. those than ran 400m in more than 50 seconds?
+
+decath_clean %>% 
+  filter(event == "x400m") %>% 
+  group_by(result <= 50) %>% 
+  summarise(avg_points = mean(competition_points))
+  
+  
+```
+
+
