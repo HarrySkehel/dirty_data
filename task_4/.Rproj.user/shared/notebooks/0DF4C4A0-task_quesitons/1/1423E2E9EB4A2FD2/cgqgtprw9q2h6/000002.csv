@@ -1,9 +1,0 @@
-"0","# Question 3"
-"0",""
-"0","candy %>% "
-"0","  group_by(rating, candy_type) %>% "
-"0","  summarise(number_ratings = n()) %>% "
-"0","  slice_max(number_ratings)"
-"2","Error in candy %>% group_by(rating, candy_type) %>% summarise(number_ratings = n()) %>%  : 
-  could not find function ""%>%""
-"

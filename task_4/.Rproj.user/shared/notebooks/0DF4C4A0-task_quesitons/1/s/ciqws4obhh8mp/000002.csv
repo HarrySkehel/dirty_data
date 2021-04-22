@@ -1,0 +1,6 @@
+"0","#Question 2"
+"0",""
+"0","candy %>% "
+"0","  select(going_out, age) %>% "
+"0","  group_by(going_out) %>% "
+"0","  summarise(average_age = median(age, na.rm = TRUE))"

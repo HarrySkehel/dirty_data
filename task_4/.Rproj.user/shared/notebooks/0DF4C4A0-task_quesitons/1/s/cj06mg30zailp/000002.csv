@@ -1,0 +1,6 @@
+"0","# Quesiton 4"
+"0",""
+"0","candy %>% "
+"0","  filter(rating == ""DESPAIR"") %>% "
+"0","  filter(candy_type == ""starburst"") %>% "
+"0","  summarise(number_of_ratings = n())"

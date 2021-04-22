@@ -11,12 +11,16 @@ decath_data <- read_csv(here("clean_data/decath_data.csv"))
 ```
 
 ```{r}
+# Question 1, longest long jump
+
 decath_data %>% 
   filter(event == "long_jump") %>% 
   slice_max(result, n = 1)
 ```
 
 ```{r}
+# Question 2, average 100m time per competition
+
 decath_data %>% 
   select(result, event, competition) %>% 
   group_by(competition) %>% 
@@ -26,6 +30,8 @@ decath_data %>%
 ```
 
 ```{r}
+
+# Question 3 highest point across both competitions
 
 decath_data %>% 
   group_by(competitor, competition_points) %>% 
@@ -37,6 +43,8 @@ decath_data %>%
 ```
 
 ```{r}
+# Question 4, top 3 shot put per comp
+
 decath_data %>% 
   filter(event == "shot_put") %>% 
   group_by(competition) %>% 
@@ -45,6 +53,7 @@ decath_data %>%
 ```
 
 ```{r}
+# Average points for 400m times
 
 decath_data %>% 
   filter(event == "x400m") %>% 
