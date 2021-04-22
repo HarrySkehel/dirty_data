@@ -1,7 +1,0 @@
-"0","candy %>% 
-  group_by(rating, candy_type) %>% 
-  summarise(number_ratings = n()) %>% 
-  slice_max(number_ratings)
-"
-"2","`summarise()` has grouped output by 'rating'. You can override using the `.groups` argument.
-"

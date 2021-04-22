@@ -1,8 +1,0 @@
-"0","# Quesiton 7
-candy_by_numbers %>% 
-  group_by(source, candy_type) %>% 
-  summarise(total_ratings = sum(rating, na.rm = TRUE)) %>% 
-  slice_max(total_ratings)
-"
-"2","`summarise()` has grouped output by 'source'. You can override using the `.groups` argument.
-"
