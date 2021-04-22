@@ -12,9 +12,6 @@ candy <- read_csv(here("clean_data/clean_candy.csv"), guess_max = 800000)
 ```{r}
 # Quesiton 1
 
-candy %>% 
-  count(gender)
-
 
 candy %>% 
   summarise(number_of_ratings = sum(!is.na(rating)))
@@ -64,7 +61,6 @@ candy_by_numbers <- candy %>%
       rating == "DESPAIR" ~ -1,
       TRUE                ~ as.numeric(rating)
     ))
-  
   
 
 ```

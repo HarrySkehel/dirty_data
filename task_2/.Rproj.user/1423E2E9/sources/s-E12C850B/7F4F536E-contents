@@ -3,8 +3,8 @@ library(tidyverse)
 library(stringr)
 
 candy_2015 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2015.xlsx")
-candy_2016 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2016.xlsx")
-candy_2017 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2017.xlsx")
+
+
 
 # 2015 --------------------------------------------------------------------------------------------------------
 
@@ -34,10 +34,9 @@ long_2015 <- cleanish_2015 %>%
 long_2015 <- long_2015 %>% 
   mutate(candy_type = str_remove_all(candy_type, "[\\[|\\]]"))
 
-# removing timstamo column
+# removing timestamo column
 
 long_2015$"[timestamp]" <- NULL
-long_2015$state_province <- NULL
 
 # renaming columns to remove []
 
@@ -55,9 +54,12 @@ long_2015 <- long_2015 %>%
 
 long_2015[, "source"] <- "2015"
 
+ready_to_merge_2015 <- long_2015 %>% 
+  select(long_id, age, gender, going_out, country, candy_type, rating, source)
+
 # 2016 -------------------------------------------------------------------------------------------------------
 # Cleaning and lengthening 2016
-
+candy_2016 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2016.xlsx")
 
 colnames(candy_2016)[1] = "[timestamp]"
 colnames(candy_2016)[2] = "[going_out]"
@@ -94,14 +96,21 @@ colnames(long_2016)[4] = "country"
 
 long_2016[, "source"] <- "2016"
 
+ready_to_merge_2016 <- long_2016 %>% 
+  select(long_id, age, gender, going_out, country, candy_type, rating, source)
 
 # 2017 ----------------------------------------------------------------------------------------------------------
+
+candy_2017 <- read_xlsx("raw_data/candy_ranking_data/boing-boing-candy-2017.xlsx")
 
 cleaner_2017 <- candy_2017 %>% 
   select(matches('Q1:|Q2:|Q3:|Q4:|Q5:|Q6'))
 
+# Removing the questions markers from ecah column
+
 names(cleaner_2017) <- substring(names(cleaner_2017), 5)
 
+# Adding ID column 
 
 cleaner_2017[, "long_id"] <- c(6890:9349)
 
@@ -120,19 +129,12 @@ colnames(long_2017)[4] = "country"
 
 long_2017[, "source"] <- "2017"
 
+ready_to_merge_2017 <- long_2017 %>% 
+  select(long_id, age, gender, going_out, country, candy_type, rating, source)
 
 # Binding rows --------------------------------------------------------------------------------------------
 
-# ordering columns into correct order 
 
-ready_to_merge_2015 <- long_2015 %>% 
-  select(long_id, age, gender, going_out, country, candy_type, rating, source)
-
-ready_to_merge_2016 <- long_2016 %>% 
-  select(long_id, age, gender, going_out, country, candy_type, rating, source)
-
-ready_to_merge_2017 <- long_2017 %>% 
-  select(long_id, age, gender, going_out, country, candy_type, rating, source)
 
 # combing rows
 
@@ -173,21 +175,12 @@ candy_all_countries <- candy_all_years %>%
     )
   )
 
-pattern_age <- "[0-9]|[0-9][0-9]"
 
-age_fix <- clean_candy %>% 
-  mutate(
-    age = case_when(
-      str_detect(age, pattern_age) ~ age,
-      TRUE ~ NA
-    )
-  )
+test_candy <- candy_all_countries %>% 
+  mutate(gender = as.character(gender)) %>% 
+  mutate(age = as.numeric(age))
 
-
-
-
-clean_candy <- candy_all_countries %>% 
-  mutate(gender = as.character(gender))
+clean_candy <- test_candy
 
 
 
