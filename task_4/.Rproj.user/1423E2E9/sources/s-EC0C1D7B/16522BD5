@@ -3,7 +3,7 @@
     "path": "~/Documents/dirty_data/task_4/documentation_and_analysis/task_quesitons.Rmd",
     "project_path": "documentation_and_analysis/task_quesitons.Rmd",
     "type": "r_markdown",
-    "hash": "2634741104",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1619012062230.0,
@@ -14,15 +14,15 @@
         "chunk_output_type": "inline",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "6,0",
+        "cursorPosition": "9,0",
         "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1619088675,
+    "lastKnownWriteTime": 1619095718,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1619088675749,
+    "last_content_update": 1619095718540,
     "read_only": false,
     "read_only_alternatives": []
 }

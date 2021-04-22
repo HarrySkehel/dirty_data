@@ -1,7 +1,12 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Candy_analysis"
+output:
+  html_document:
+    df_print: paged
 ---
+
+The dataset was made up of 3 separate tables, one for each year from 2015 to 2017. There were many differences in the tables including numbers of columns and formatting of column names.
+
 
 ```{r}
 library(tidyverse)
@@ -9,6 +14,8 @@ library(here)
 
 candy <- read_csv(here("clean_data/clean_candy.csv"), guess_max = 800000)
 ```
+
+
 ```{r}
 # Quesiton 1
 

@@ -1,1 +1,5 @@
-"0","  "
+"0","# Quesiton 1"
+"0",""
+"0",""
+"0","candy %>% "
+"0","  summarise(number_of_ratings = sum(!is.na(rating)))"
