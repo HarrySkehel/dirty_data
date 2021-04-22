@@ -173,9 +173,26 @@ candy_all_countries <- candy_all_years %>%
     )
   )
 
-clean_candy <- candy_all_countries
+pattern_age <- "[0-9]|[0-9][0-9]"
+
+age_fix <- clean_candy %>% 
+  mutate(
+    age = case_when(
+      str_detect(age, pattern_age) ~ age,
+      TRUE ~ NA
+    )
+  )
+
+
+
+
+clean_candy <- candy_all_countries %>% 
+  mutate(gender = as.character(gender))
+
+
 
 write_csv(clean_candy, "clean_data/clean_candy.csv")
 
 
+  
 

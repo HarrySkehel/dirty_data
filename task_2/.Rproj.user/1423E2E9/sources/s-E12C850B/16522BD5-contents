@@ -7,10 +7,14 @@ output: html_notebook
 library(tidyverse)
 library(here)
 
-candy <- read_csv(here("clean_data/clean_candy.csv"))
+candy <- read_csv(here("clean_data/clean_candy.csv"), guess_max = 800000)
 ```
 ```{r}
 # Quesiton 1
+
+candy %>% 
+  count(gender)
+
 
 candy %>% 
   summarise(number_of_ratings = sum(!is.na(rating)))
@@ -22,7 +26,7 @@ candy %>%
 candy %>% 
   select(going_out, age) %>% 
   group_by(going_out) %>% 
-  summarise(average_age = median(age, na.rm = TRUE))  
+  summarise(average_age = median(age, na.rm = TRUE))
 
 
 ```
@@ -31,28 +35,15 @@ candy %>%
 # Question 3
 
 candy %>% 
-  filter(rating == "JOY") %>% 
-  group_by(candy_type, rating) %>% 
+  group_by(rating, candy_type) %>% 
   summarise(number_ratings = n()) %>% 
-  ungroup() %>% 
-  slice_max(number_ratings, n = 1)
-
-candy %>% 
-  filter(rating == "DESPAIR") %>% 
-  group_by(candy_type, rating) %>% 
-  summarise(number_ratings = n()) %>% 
-  ungroup() %>% 
-  slice_max(number_ratings, n = 1)
-
-candy %>% 
-  filter(rating == "MEH") %>% 
-  group_by(candy_type, rating) %>% 
-  summarise(number_ratings = n()) %>% 
-  ungroup() %>% 
-  slice_max(number_ratings, n = 1)
+  slice_max(number_ratings)
 
   
+
 ```
+
+
 ```{r}
 # Quesiton 4
 
@@ -80,8 +71,36 @@ candy_by_numbers <- candy %>%
 
 
 ```{r}
+# Question 6
+
+candy_by_numbers %>%
+  filter(gender == "Male") %>% 
+  group_by(candy_type) %>% 
+  summarise(total_ratings = sum(rating, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  slice_max(total_ratings)
 
 
+candy_by_numbers %>% 
+  group_by(gender, candy_type) %>% 
+  summarise(total_ratings = sum(rating, na.rm = TRUE)) %>% 
+  slice_max(total_ratings)
 
+
+```
+```{r}
+# Quesiton 7
+candy_by_numbers %>% 
+  group_by(source, candy_type) %>% 
+  summarise(total_ratings = sum(rating, na.rm = TRUE)) %>% 
+  slice_max(total_ratings)
+
+```
+```{r}
+# Question 8
+candy_by_numbers %>% 
+  group_by(country, candy_type) %>% 
+  summarise(total_ratings = sum(rating, na.rm = TRUE)) %>% 
+  slice_max(total_ratings)
 ```
 
